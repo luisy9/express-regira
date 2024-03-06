@@ -1,7 +1,7 @@
 //db
 const express = require('express');
 const cors = require('cors');
-const routes = require('./routes');
+const routesUser = require('./router/routesUsers');
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -16,8 +16,8 @@ app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 // permet llegir les cookies
 app.use(cookieParser());
 
-// Routes
-app.use('/api', routes);
+// RoutesUser
+app.use('/api', routesUser);
 
 // iniciem servidor
 const PORT = 3000;

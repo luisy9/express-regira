@@ -3,7 +3,7 @@ const Sequelize = require('sequelize'); // Importa la llibreria Sequelize
 
 const bcrypt = require('bcrypt'); // Importa la llibreria bcrypt per a encriptar contrasenyes
 
-const sequelize = new Sequelize('bolets', 'root', 'admin', {
+const sequelize = new Sequelize('regira', 'root', 'my-secret-pw', {
   //host: 'localhost',
   host: 'localhost', //IP de la base de dades
   dialect: 'mysql', // connectem a mysql
@@ -24,14 +24,16 @@ const Proyecto = sequelize.define('proyecto', {
     type: Sequelize.TINYINT, // Només es permeten aquests valors
     allowNull: false, // No es permet valor nul per al tipus
   },
-  created_at: {
-    type: Sequelize.TIMESTAMP,
-    allowNull: true, // Es permet valor nul per a la foto
-  },
-  udated_at: {
-    type: Sequelize.TIMESTAMP,
-    allowNull: true, // Es permet valor nul per a la foto
-  },
+  // created_at: {
+  //   type: Sequelize.DataTypes.DATE,
+  //   allowNull: true, // Es permet valor nul per a la foto
+  //   defaultValue: Sequelize.DataTypes.NOW,
+  // },
+  // udated_at: {
+  //   type: Sequelize.DataTypes.DATE,
+  //   allowNull: true, // Es permet valor nul per a la foto
+  //   defaultValue: Sequelize.DataTypes.NOW,
+  // },
 });
 
 // Es defineix el model de Comment
@@ -101,32 +103,33 @@ Usuario.beforeCreate(async (user) => {
 Tarea.belongsToMany(Tag, { through: 'tareas_has_tags' }); // Relació de molts a molts entre Tareas i Tag
 Tag.belongsToMany(Tarea, { through: 'tareas_has_tags' }); // Relació de molts a molts entre Tag i Tareas
 
-// Usuario.hasMany(Tarea); // Un usuari pot tenir molts tareas
-// Tarea.belongsTo(Usuario, { foreignKey: 'usuarios_id' }); // Una Tarea pertany a un únic usuari
-// Usuario.hasMany(Tarea);
-// Tarea.belongsTo(Usuario, { foreignKey: 'author_id' });
+Usuario.hasMany(Tarea, { foreignKey: 'usuarios_id' }); // Un usuari pot tenir molts tareas
+Tarea.belongsTo(Usuario, { foreignKey: 'usuarios_id' }); // Una Tarea pertany a un únic usuari
+Usuario.hasMany(Tarea, { foreignKey: 'author_id' });
+Tarea.belongsTo(Usuario, { foreignKey: 'author_id' });
 
-Usuario.
+// Usuario.Usuario.hasMany(Tarea);
 
-Usuario.hasMany(Tarea);
-
-Usuario.hasMany(Comment);
+/* Crear relacion de un Usuario, un Usuario puede tener 
+muchos comentarios y un comentario esta asignado a un usuario */
+Usuario.hasMany(Comment, { foreignKey: 'usuario_id' });
 Comment.belongsTo(Usuario, { foreignKey: 'usuario_id' });
 
-Tarea.hasMany(Comment);
+/* Una Tarea puede tener muchos comentarios, pero un comentario esta solo en una Tarea */
+Tarea.hasMany(Comment, { foreignKey: 'tareas_id' });
 Comment.belongsTo(Tarea, { foreignKey: 'tareas_id' });
 
-Usuario.hasMany(Proyecto);
+Usuario.hasMany(Proyecto, { foreignKey: 'usuarios_id' });
 Proyecto.belongsTo(Usuario, { foreignKey: 'usuarios_id' });
 
-Proyecto.hasMany(Tarea);
+Proyecto.hasMany(Tarea, { foreignKey: 'proyectos_id' });
 Tarea.belongsTo(Proyecto, { foreignKey: 'proyectos_id' });
 
 async function iniBD() {
   await sequelize.sync({ force: true });
 }
 
-// iniBD();
+iniBD();
 
 // Exporta els models per a poder ser utilitzats en altres parts de l'aplicació
 module.exports = {
