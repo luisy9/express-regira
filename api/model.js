@@ -56,6 +56,12 @@ const Usuario = sequelize.define('usuario', {
     allowNull: false, // No es permet valor nul per a l'email
     unique: true, // L'email ha de ser únic
   },
+
+  password: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
 });
 
 const Tarea = sequelize.define('tarea', {
@@ -129,7 +135,8 @@ async function iniBD() {
   await sequelize.sync({ force: true });
 }
 
-iniBD();
+//Comentamos para que no se sobreescriban las tablas
+// iniBD();
 
 // Exporta els models per a poder ser utilitzats en altres parts de l'aplicació
 module.exports = {
